@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:include="/_linkImports"></th:block>
+        <title>Invoice Registration</title>
+        <script type="text/javascript" th:src="@{/js/invoiceCreationJS.js}"></script>
+    </head>
+    <body>
+        <th:block th:include="/_menu"></th:block>
+        <div class="container">
+            <div class="card bg-light">
+                <article class="card-body mx-auto" style="max-width: 400px;">
+                    <h4 class="card-title mt-3 text-center">Create your invoice</h4>
+                    <p class="text-center">Please enter in all of the invoice details below</p>
+
+                    <form th:action="@{/invoice/invoiceCreation}" method='POST' th:object="${invoiceCreation}" >
+                    <p class="error-message" th:if="${#fields.hasGlobalErrors()}"
+                           th:each="error : ${#fields.errors('global')}" th:text="${error}">Validation
+                            error</p>
+
+                        <div class="form-group input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                             </div>
+                            <div><input name="invoiceName" th:field="*{invoiceName}" class="form-control" placeholder="Invoice name" type="text"></div>
+                            <div class="alert alert-danger " th:each="error: ${#fields.errors('invoiceName')}" th:text="${error}"></div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Brief Description of Articles/Goods/Services being procured: </th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="row, rowIndex : *{invoiceRows}">
+                                    <td><input th:field="*{invoiceRows[__${rowIndex.index}__].description}" /></td>
+                                    <td><input th:data1="${row.quantity}" th:onchange="javascript:updatePrice(this.getAttribute('data1'));" th:field="*{invoiceRows[__${rowIndex.index}__].quantity}"/></td>
+                                    <td><input onchange="updatePrice(this)" th:field="*{invoiceRows[__${rowIndex.index}__].price}" /></td>
+                                    <td><span th:text="${row.total}"> Total </span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="form-group">
+                             <a th:href="@{/invoice/addNewRow}" class="btn btn-primary a-btn-slide-text"><span class="glyphicon glyphicon-edit"></span><span><strong>Add Row</strong></span></a>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block"> Create invoice  </button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </div>
+    </body>
+</html>

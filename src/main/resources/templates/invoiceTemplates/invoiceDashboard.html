@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Dashboard</title>
+         <th:block th:include="/_linkImports"></th:block>
+    </head>
+    <body>
+    <th:block th:include="/_menu"></th:block>
+        <div class="container">
+            <div class="row">
+                <div class="table-responsive table-bordered movie-table">
+                    <table class="table">
+                      <thead>
+                          <tr class="trHeader">
+                              <th>Invoice Name</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      <tr th:if="${invoices.empty}">
+                          <td colspan="4"> No Invoices Available </td>
+                      </tr>
+                      <tr th:each="invoice : ${invoices}">
+                          <td><span th:text="${invoice.invoiceName}"> Name </span></td>
+                          <td>
+                             <a th:href="@{/invoice/invoiceUpdate(invoiceId=${invoice.invoiceId})}" class="btn btn-primary a-btn-slide-text"><span class="glyphicon glyphicon-edit"></span><span><strong>Edit</strong></span></a>
+                             <a th:href="@{/invoice/deleteInvoice(invoiceId=${invoice.invoiceId})}" class="btn btn-primary a-btn-slide-text"><span class="glyphicon glyphicon-remove"></span><span><strong>Delete</strong></span></a>
+                          </td>
+                       </tr>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
