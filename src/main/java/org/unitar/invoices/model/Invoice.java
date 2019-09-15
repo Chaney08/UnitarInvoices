@@ -1,6 +1,8 @@
 package org.unitar.invoices.model;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -28,7 +30,10 @@ public class Invoice {
     private User user;
 
     @OneToMany(mappedBy="invoice")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<InvoiceRow> invoiceRows;
+
+    private int totalAmount;
 
     public Invoice(){
 
@@ -72,6 +77,15 @@ public class Invoice {
             invoiceRows = new ArrayList<>();
         }
         this.invoiceRows.add(row);
+    }
+
+
+    public int getTotalAmount() {
+        if(invoiceRows == null){
+            return 0;
+        }
+        totalAmount = invoiceRows.stream().mapToInt(x-> x.getTotal()).sum();
+        return totalAmount;
     }
 
     @Override

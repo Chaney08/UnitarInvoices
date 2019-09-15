@@ -81,6 +81,7 @@ public class InvoiceController {
     public String updateInvoice(Model model, @RequestParam(name="invoiceId") int idForEditing) {
         Invoice invoice = invoiceRepo.findInvoiceByInvoiceId(idForEditing);
         invoice.setInvoiceRows(invoiceRowRepo.findByInvoice(invoice));
+        invoice.getInvoiceRows().stream().forEach(x-> x.setInvoice(invoice));
         model.addAttribute("invoiceUpdate", invoice);
         return "invoiceTemplates/invoiceUpdate";
     }
@@ -88,13 +89,17 @@ public class InvoiceController {
     @PostMapping(value = "/invoiceUpdate")
     public String updateInvoice(@ModelAttribute("invoiceUpdate") @Valid Invoice invoice,
                              BindingResult result) {
+        this.invoice = invoice;
 
-        System.out.println("Hitting the update");
+        int index = invoice.getInvoiceRows().size();
         if (result.hasErrors()) {
             return "invoiceTemplates/invoiceUpdate";
         }else {
             invoice.setUser(webUtils.getUser());
             invoiceRepo.save(invoice);
+
+            invoice.getInvoiceRows().stream().forEach(x-> x.setInvoice(invoice));
+            invoice.getInvoiceRows().stream().forEach(x -> invoiceRowRepo.delete(x));
             invoice.getInvoiceRows().stream().forEach(x -> invoiceRowRepo.save(x));
             return "redirect:/invoice/invoiceDashboard";
         }
@@ -108,6 +113,14 @@ public class InvoiceController {
         invoice.addInvoiceRow(new InvoiceRow());
         model.addAttribute("invoiceCreation", invoice);
         return "invoiceTemplates/invoiceCreation";
+    }
+    //This method is for adding a new row to the invoice creation page
+    @Transactional
+    @RequestMapping(value = "/updateAddNewRow", method = RequestMethod.GET)
+    public String updateAddNewRow(Model model) {
+        invoice.addInvoiceRow(new InvoiceRow());
+        model.addAttribute("invoiceUpdate", invoice);
+        return "invoiceTemplates/invoiceUpdate";
     }
 
 

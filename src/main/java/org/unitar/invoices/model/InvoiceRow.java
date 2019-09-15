@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class InvoiceRow {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long rowId;
 
     private String description;
@@ -81,10 +81,10 @@ public class InvoiceRow {
         this.invoice = invoice;
     }
 
-    public String getTotal() {
+    public int getTotal() {
         int quantity = Integer.parseInt(this.quantity);
         int price = Integer.parseInt(this.price);
-        String total = Integer.toString(quantity * price);
+        int total = quantity * price;
         return total;
     }
 }
