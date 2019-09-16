@@ -58,9 +58,15 @@ public class InvoiceController {
 
         if (result.hasErrors()) {
             return "invoiceTemplates/invoiceCreation";
-        }else {
+        }else if(invoice.getInvoiceRows() == null){
+            result.rejectValue("invoiceName", null, "Please ensure you have at least one row before proceeding");
+            return "invoiceTemplates/invoiceCreation";
+        }
+        else {
             invoice.setUser(webUtils.getUser());
+
             invoiceRowRepo.saveAll(invoice.getInvoiceRows());
+
             invoiceRepo.save(invoice);
 
             invoice.getInvoiceRows().stream().forEach(x-> x.setInvoice(invoice));
@@ -79,7 +85,7 @@ public class InvoiceController {
 
     @GetMapping(value = "/invoiceUpdate")
     public String updateInvoice(Model model, @RequestParam(name="invoiceId") int idForEditing) {
-        Invoice invoice = invoiceRepo.findInvoiceByInvoiceId(idForEditing);
+        invoice = invoiceRepo.findInvoiceByInvoiceId(idForEditing);
         invoice.setInvoiceRows(invoiceRowRepo.findByInvoice(invoice));
         invoice.getInvoiceRows().stream().forEach(x-> x.setInvoice(invoice));
         model.addAttribute("invoiceUpdate", invoice);
@@ -114,11 +120,20 @@ public class InvoiceController {
         model.addAttribute("invoiceCreation", invoice);
         return "invoiceTemplates/invoiceCreation";
     }
-    //This method is for adding a new row to the invoice creation page
+    @RequestMapping(value = "/deleteRow", method = RequestMethod.GET)
+    public String deleteRow(Model model, @RequestParam(name="rowIndex") int rowIdForDeletion) {
+        invoice.deleteRowByIndex(rowIdForDeletion);
+        invoiceRowRepo.deleteInvoiceRowByRowId(rowIdForDeletion);
+        model.addAttribute("invoiceCreation", invoice);
+        return "invoiceTemplates/invoiceCreation";
+    }
     @Transactional
-    @RequestMapping(value = "/updateAddNewRow", method = RequestMethod.GET)
-    public String updateAddNewRow(Model model) {
-        invoice.addInvoiceRow(new InvoiceRow());
+    @RequestMapping(value = "/updateDeleteRow", method = RequestMethod.GET)
+    public String updateDeleteRow(Model model, @RequestParam(name="rowId") int rowIdForDeletion,
+                                  @ModelAttribute("invoiceUpdate") @Valid Invoice myInvoice,BindingResult result) {
+        invoice.deleteRow(rowIdForDeletion);
+        invoiceRowRepo.deleteInvoiceRowByRowId(rowIdForDeletion);
+        invoiceRepo.save(invoice);
         model.addAttribute("invoiceUpdate", invoice);
         return "invoiceTemplates/invoiceUpdate";
     }

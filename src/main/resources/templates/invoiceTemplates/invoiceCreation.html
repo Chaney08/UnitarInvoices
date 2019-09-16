@@ -40,6 +40,7 @@
                                 <td><input th:data1="${row.quantity}" th:onchange="javascript:updatePrice(this.getAttribute('data1'));" th:field="*{invoiceRows[__${rowIndex.index}__].quantity}"/></td>
                                 <td><input onchange="updatePrice(this)" th:field="*{invoiceRows[__${rowIndex.index}__].price}" /></td>
                                 <td><span th:text="${row.total}"> Total </span></td>
+                                <td><a th:href="@{/invoice/deleteRow(rowIndex=${rowIndex.index})}" class="btn btn-primary a-btn-slide-text"><span class="glyphicon glyphicon-remove"></span><span><strong>Delete</strong></span></a></td>
                                 <td style="display:none"><input th:field="*{invoiceRows[__${rowIndex.index}__].rowId}" /></td>
                             </tr>
                             <tr>

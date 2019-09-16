@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -79,6 +80,18 @@ public class Invoice {
         this.invoiceRows.add(row);
     }
 
+    public void deleteRow(int idForDeletion){
+        //Need to use iterator as we will be removing if found - Which cannot be done in enhanced for loop
+        for (Iterator<InvoiceRow> it = invoiceRows.iterator(); it.hasNext();) {
+            InvoiceRow row = it.next();
+            if (idForDeletion == row.getRowId()){
+                it.remove();
+            }
+        }
+    }
+    public void deleteRowByIndex(int index){
+        this.invoiceRows.remove(index);
+    }
 
     public int getTotalAmount() {
         if(invoiceRows == null){

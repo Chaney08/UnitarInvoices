@@ -25,10 +25,11 @@ public class UnitarInvoiceApplication {
         SpringApplication.run(UnitarInvoiceApplication.class, args);
     }
 
+    //This just creates base users for testing, add as many users as required to array
     @Bean
     CommandLineRunner init(UserRepository userRepository) {
         return args -> {
-            Stream.of("user1", "Julie", "Jennifer", "Helen", "Rachel").forEach(name -> {
+            Stream.of("user1").forEach(name -> {
                 User user = new User(name, passwordEncoder.encode("123"),name);
                 userRepository.save(user);
             });
