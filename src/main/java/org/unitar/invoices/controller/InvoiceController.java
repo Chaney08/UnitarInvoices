@@ -79,6 +79,9 @@ public class InvoiceController {
     @Transactional
     @RequestMapping(value = "/deleteInvoice", method = RequestMethod.GET)
     public String deleteInvoice(@RequestParam(name="invoiceId") long idForDeletion) {
+        invoice = invoiceRepo.findInvoiceByInvoiceId(idForDeletion);
+        invoice.getInvoiceRows().stream().forEach(x-> x.setInvoice(invoice));
+        invoice.getInvoiceRows().stream().forEach(x -> invoiceRowRepo.delete(x));
         invoiceRepo.deleteInvoiceByInvoiceId(idForDeletion);
         return "redirect:/invoice/invoiceDashboard";
     }

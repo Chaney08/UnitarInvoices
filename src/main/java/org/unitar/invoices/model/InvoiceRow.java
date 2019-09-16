@@ -28,9 +28,6 @@ public class InvoiceRow {
     private Invoice invoice;
 
     public InvoiceRow(){
-        this.description = "test";
-        this.quantity = "2";
-        this.price = "2";
     }
 
     public Long getRowId() {
@@ -82,6 +79,9 @@ public class InvoiceRow {
     }
 
     public int getTotal() {
+        if(quantity == null ||	price == null){
+            return 0;
+        }
         int quantity = Integer.parseInt(this.quantity);
         int price = Integer.parseInt(this.price);
         int total = quantity * price;
